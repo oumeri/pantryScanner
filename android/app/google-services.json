@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "914243259256",
+    "project_id": "pantryscanner-dca28",
+    "storage_bucket": "pantryscanner-dca28.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:914243259256:android:3bb3e4c56c3ee43826d68d",
+        "android_client_info": {
+          "package_name": "com.example.pantry_scanner"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9BXfpkWdee73glyW4aUiurA458uRY37Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

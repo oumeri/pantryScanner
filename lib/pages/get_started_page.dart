@@ -1,12 +1,19 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pantry_scanner/components/my_button.dart';
-import 'package:pantry_scanner/pages/login_page.dart';
+import 'package:pantry_scanner/pages/auth/login_or_signup.dart';
 
 class GetStarted extends StatelessWidget {
   
-  const GetStarted({super.key});
 
+  const GetStarted({
+    super.key, 
+    });
+
+
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,11 +48,14 @@ class GetStarted extends StatelessWidget {
             // Get Started button
             MyButton(
               text: "Get Started", 
-              onTap: () => {
-                Navigator.push(
+              onTap: ()=>{
+                 // Navigate to Login/Signup page
+                 // TODO: we should use replace instead of pushing on top of getstarted
+                  Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
-                 )
+                    MaterialPageRoute(builder: (context) => const LoginOrSignup()),
+                  )
+
               },
             ),
           ]),

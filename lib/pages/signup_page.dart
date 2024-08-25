@@ -1,20 +1,95 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pantry_scanner/components/my_button.dart';
 import 'package:pantry_scanner/components/my_textField.dart';
+import 'package:pantry_scanner/pages/helper/helper_functions.dart';
 
-class SignupPage extends StatelessWidget {
+class SignupPage extends StatefulWidget {
+
+  final void Function()? onTap;
+
+
+  const SignupPage({super.key,this.onTap});
+
+  @override
+  State<SignupPage> createState() => _SignupPageState();
+}
+
+class _SignupPageState extends State<SignupPage> {
+
 
   final TextEditingController usernameController = TextEditingController();
+
   final TextEditingController emailController = TextEditingController();
+
   final TextEditingController passwordController = TextEditingController();
 
-  SignupPage({super.key});
-  
-  void signup () {
+  final TextEditingController confirmPasswordController = TextEditingController();
+
+  Future<void> signup () async {
+   // show loading circle
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent closing the dialog by tapping outside
+      builder: (context) => const Center(
+      child: CircularProgressIndicator(),
+     ),
+     );
+
+
+   // password match
+    if(passwordController.text != confirmPasswordController.text){
+      // pop loading circle
+      Navigator.pop(context);
+
+      // display a error message
+      displayMessageToUser("Password don't match", context);
+    }else{
+      // try creating user
+      try{ 
+
+        // create user
+        UserCredential userCredential = 
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+              email: emailController.text, 
+              password: passwordController.text);
+
+
+        // create the user profile doc
+        await createUserProfile(userCredential.user!, usernameController.text);
+
+        // pop loading circle
+        Navigator.pop(context);
+
+       
+     
+
+      }on FirebaseAuthException catch(error)
+      {
+          // pop loading circle
+          Navigator.pop(context);
+
+          // display error message
+          displayMessageToUser(error.code, context);
+      } finally {
+         // pop loading circle
+          Navigator.pop(context);
+
+      }
+
+    }
+
+
    
+
   }
-  
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,31 +169,34 @@ class SignupPage extends StatelessWidget {
                               obscureText: true, 
                               controller: passwordController
                             ),
+
+                            const SizedBox(height: 20), // Spacing between widgets
+                      
+                            // confirm Password input
+                            MyTextField(hintText: "Confirm Password",
+                              obscureText: true, 
+                              controller: confirmPasswordController
+                            ),
                             
-                            const SizedBox(height: 5), // Spacing between widgets
+                            const SizedBox(height: 15), // Spacing between widgets
                       
                             // Forgot password
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                TextButton(
-                                  onPressed: () {
-                                    // Handle forgot password
-                                  },
-                                  style: TextButton.styleFrom(
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), // Padding
-                                      textStyle: const TextStyle(
-                                        fontSize: 16, // Font size
-                                        fontWeight: FontWeight.bold, // Font weight
+                                GestureDetector(
+                                  onTap: () => {},
+                                  child: const Text(
+                                    "Forgot Password?",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  child: const Text('Forgot Password?'),
                                 ),
                               ],
                             ),
                             
-                            const SizedBox(height: 5), // Spacing between widgets
+                            const SizedBox(height: 15), // Spacing between widgets
                       
                             // Login button
                             MyButton(
@@ -126,23 +204,32 @@ class SignupPage extends StatelessWidget {
                               onTap:  signup,
                             ),
                           
-                            const SizedBox(height: 5), // Spacing between widgets
+                            const SizedBox(height: 15), // Spacing between widgets
                       
-                            // Don't have an account - Register
-                            TextButton(
-                              onPressed: () {
-                                 Navigator.pop(context);
-                              },
-                              style: TextButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), // Padding
-                                  textStyle: const TextStyle(
-                                    fontSize: 16, // Font size
-                                    fontWeight: FontWeight.bold, // Font weight
+                            // already have an account log in
+                             Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  "Already have and account?",
+
+                                  style:  TextStyle(
+                                    color: Colors.white,
+
+                                  ),
                                 ),
-                              ),
-                              child: const Text("Already have and account? Log In"),
+                                GestureDetector(
+                                  onTap: widget.onTap,
+                                  child: const Text(
+                                    "Log In",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
+                            
                         ]),
                     )
 
