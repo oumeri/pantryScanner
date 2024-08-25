@@ -23,7 +23,7 @@ class MyButton extends StatelessWidget {
           color: Colors.black, //Theme.of(context).colorScheme.secondary,
           borderRadius: BorderRadius.circular(12),
         ),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(14),
         child: Center(
           child: Text(
             text,

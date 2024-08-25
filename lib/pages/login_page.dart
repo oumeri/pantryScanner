@@ -1,20 +1,79 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pantry_scanner/components/my_button.dart';
 import 'package:pantry_scanner/components/my_textField.dart';
-import 'package:pantry_scanner/pages/signup_page.dart';
+import 'package:pantry_scanner/pages/helper/helper_functions.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
 
+  final void Function()? onTap;
+
+  const LoginPage({super.key, this.onTap});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  
   final TextEditingController emailController = TextEditingController();
+
   final TextEditingController passwordController = TextEditingController();
 
-  LoginPage({super.key});
-  
-  void login () {
+  Future<void> login () async {
+      // show loading circle
+     showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent closing the dialog by tapping outside
+      builder: (context) => const Center(
+      child: CircularProgressIndicator(),
+     ),
+     );
 
-  }
-  
+
+      // try creating user
+      try{ 
+
+        // log in
+        UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+              email: emailController.text, 
+              password: passwordController.text);
+
+        // Check if the user profile already exists
+        DocumentSnapshot profileSnapshot = await FirebaseFirestore.instance
+            .collection('profiles')
+            .doc(userCredential.user!.uid)
+            .get();
+
+        // If the profile doesn't exist, create it
+        if (!profileSnapshot.exists) {
+          throw Error();
+        }
+
+        // pop loading circle
+        if(context.mounted) Navigator.pop(context);
+
+
+      }on FirebaseAuthException catch(error)
+      {
+            // pop loading circle
+            Navigator.pop(context);
+
+            // display error message
+            displayMessageToUser(error.code, context);
+      }finally{
+         // pop loading circle
+          Navigator.pop(context);
+
+      }
+
+    }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,30 +144,25 @@ class LoginPage extends StatelessWidget {
                               controller: passwordController
                             ),
                             
-                            const SizedBox(height: 5), // Spacing between widgets
+                            const SizedBox(height: 15), // Spacing between widgets
                       
-                            // Forgot password
+                           // Forgot password
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                TextButton(
-                                  onPressed: () {
-                                    // Handle forgot password
-                                  },
-                                  style: TextButton.styleFrom(
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), // Padding
-                                      textStyle: const TextStyle(
-                                        fontSize: 16, // Font size
-                                        fontWeight: FontWeight.bold, // Font weight
+                                GestureDetector(
+                                  onTap: () => {},
+                                  child: const Text(
+                                    "Forgot Password?",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  child: const Text('Forgot Password?'),
                                 ),
                               ],
                             ),
                             
-                            const SizedBox(height: 5), // Spacing between widgets
+                            const SizedBox(height: 15), // Spacing between widgets
                       
                             // Login button
                             MyButton(
@@ -116,26 +170,32 @@ class LoginPage extends StatelessWidget {
                               onTap: login,
                             ),
                           
-                            const SizedBox(height: 5), // Spacing between widgets
+                            const SizedBox(height: 15), // Spacing between widgets
                       
                             // Don't have an account - Register
-                            TextButton(
-                              onPressed: () {
-                                 Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => SignupPage()),
-                                  );
-                              },
-                              style: TextButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), // Padding
-                                  textStyle: const TextStyle(
-                                    fontSize: 16, // Font size
-                                    fontWeight: FontWeight.bold, // Font weight
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  "Don't have and account?",
+
+                                  style:  TextStyle(
+                                    color: Colors.white,
+
+                                  ),
                                 ),
-                              ),
-                              child: const Text("Don't have an account? Register"),
+                                GestureDetector(
+                                  onTap: widget.onTap,
+                                  child: const Text(
+                                    "Register Here",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
+                            
                         ]),
                     )
 

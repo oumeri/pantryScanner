@@ -22,8 +22,10 @@ class MyTextField extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceVariant,
         borderRadius:  BorderRadius.circular(12),
+       
 
       ),
+     
       child: TextField(
           controller: controller,
           obscureText: obscureText,
@@ -32,7 +34,8 @@ class MyTextField extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: const TextStyle(
-              color: Colors.white,
+              color: Color.fromARGB(139, 255, 255, 255),
+              
             ),
             border:  OutlineInputBorder(
               borderRadius:  BorderRadius.circular(12)
