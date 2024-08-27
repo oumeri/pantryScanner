@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pantry_scanner/components/my_button.dart';
 import 'package:pantry_scanner/components/my_textField.dart';
 import 'package:pantry_scanner/pages/helper/helper_functions.dart';
+import 'package:pantry_scanner/services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
 
@@ -77,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Stack(
         children: [
           // Background
@@ -170,6 +171,32 @@ class _LoginPageState extends State<LoginPage> {
                               onTap: login,
                             ),
                           
+                            const SizedBox(height: 15), // Spacing between widgets
+
+                            //Divider line
+                            const Text("Or",
+                              style: TextStyle(
+                                color:Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 25,
+                              ),
+                            ),
+
+                            const SizedBox(height: 15), // Spacing between widgets
+
+                            //Other login options
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                //Google sign in button
+                                GestureDetector(
+                                  onTap: () => AuthService().signInWithGoogle(),
+                                  child: Image.asset('assets/images/google-signin.png',height: 55,),
+                                )
+                                
+                              ]
+                            ),
+                            
                             const SizedBox(height: 15), // Spacing between widgets
                       
                             // Don't have an account - Register

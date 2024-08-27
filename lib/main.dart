@@ -6,7 +6,6 @@ import 'package:pantry_scanner/pages/auth/auth.dart';
 import 'package:pantry_scanner/theme/light_mode.dart';
 
 void main() async {
-  
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
@@ -21,6 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: lighMode,
+      debugShowCheckedModeBanner: false,
       home: const Auth(),
     );
   }
