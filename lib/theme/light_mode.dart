@@ -13,10 +13,9 @@ const Color secondaryLight2 = Color(0xFF484A55);
 ThemeData lighMode = ThemeData(
   brightness: Brightness.light,
   colorScheme: const ColorScheme.light(
-    background: Color(0xFFE0EFE4),
     primary: primary,
     primaryContainer: primaryLight,
-    surfaceVariant: primaryDark,
+    surfaceContainerHighest: primaryDark,
 
     secondary: secondary,
     secondaryContainer: secondaryLight1,
