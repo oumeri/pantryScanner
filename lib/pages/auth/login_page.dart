@@ -1,99 +1,36 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pantry_scanner/components/my_button.dart';
 import 'package:pantry_scanner/components/my_textField.dart';
 import 'package:pantry_scanner/pages/helper/helper_functions.dart';
+import 'package:pantry_scanner/services/auth_service.dart';
+import 'package:sign_in_button/sign_in_button.dart';
+//import 'package:pantry_scanner/services/auth_service.dart';
 
-class SignupPage extends StatefulWidget {
+class LoginPage extends StatefulWidget {
 
   final void Function()? onTap;
 
-
-  const SignupPage({super.key,this.onTap});
+  const LoginPage({super.key, this.onTap});
 
   @override
-  State<SignupPage> createState() => _SignupPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _SignupPageState extends State<SignupPage> {
-
-
-  final TextEditingController usernameController = TextEditingController();
-
+class _LoginPageState extends State<LoginPage> {
+  
   final TextEditingController emailController = TextEditingController();
 
   final TextEditingController passwordController = TextEditingController();
 
-  final TextEditingController confirmPasswordController = TextEditingController();
-
-  Future<void> signup () async {
-   // show loading circle
-    showDialog(
-      context: context,
-      barrierDismissible: false, // Prevent closing the dialog by tapping outside
-      builder: (context) => const Center(
-      child: CircularProgressIndicator(),
-     ),
-     );
-
-
-   // password match
-    if(passwordController.text != confirmPasswordController.text){
-      // pop loading circle
-      Navigator.pop(context);
-
-      // display a error message
-      displayMessageToUser("Password don't match", context);
-    }else{
-      // try creating user
-      try{ 
-
-        // create user
-        UserCredential userCredential = 
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
-              email: emailController.text, 
-              password: passwordController.text);
-
-
-        // create the user profile doc
-        await createUserProfile(userCredential.user!, usernameController.text);
-
-        // pop loading circle
-        Navigator.pop(context);
-
-       
-     
-
-      }on FirebaseAuthException catch(error)
-      {
-          // pop loading circle
-          Navigator.pop(context);
-
-          // display error message
-          displayMessageToUser(error.code, context);
-      } finally {
-         // pop loading circle
-          Navigator.pop(context);
-
-      }
-
-    }
-
-
-   
-
-  }
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       body: Stack(
         children: [
           // Background
@@ -136,7 +73,7 @@ class _SignupPageState extends State<SignupPage> {
                         children: [
                             // log in form 
                             const Text(
-                              "Sign Up",
+                              "Log In",
                               style: TextStyle(
                                 fontSize: 38,
                                 fontWeight: FontWeight.bold,
@@ -144,20 +81,10 @@ class _SignupPageState extends State<SignupPage> {
                               ),
                             ),
 
-
-                             const SizedBox(height: 25), // Spacing between widgets
-                      
-                            // Email input
-                            MyTextField(hintText: "Username",
-                              obscureText: false, 
-                              controller: usernameController
-                            ),
-
-
                             const SizedBox(height: 25), // Spacing between widgets
                       
                             // Email input
-                            MyTextField(hintText: "Email",
+                           MyTextField(hintText: "Email",
                               obscureText: false, 
                               controller: emailController
                             ),
@@ -169,18 +96,10 @@ class _SignupPageState extends State<SignupPage> {
                               obscureText: true, 
                               controller: passwordController
                             ),
-
-                            const SizedBox(height: 20), // Spacing between widgets
-                      
-                            // confirm Password input
-                            MyTextField(hintText: "Confirm Password",
-                              obscureText: true, 
-                              controller: confirmPasswordController
-                            ),
                             
                             const SizedBox(height: 15), // Spacing between widgets
                       
-                            // Forgot password
+                           // Forgot password
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
@@ -200,18 +119,48 @@ class _SignupPageState extends State<SignupPage> {
                       
                             // Login button
                             MyButton(
-                              text: "Sign Up", 
-                              onTap:  signup,
+                              text: "Login", 
+                              onTap: () async {
+                                await AuthService().login(context, emailController, passwordController);
+                              },
                             ),
                           
                             const SizedBox(height: 15), // Spacing between widgets
+
+                            //Divider line
+                            const Text("Or",
+                              style: TextStyle(
+                                color:Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 25,
+                              ),
+                            ),
+
+                            const SizedBox(height: 15), // Spacing between widgets
+
+                            //Other login options
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                //Google sign in button
+                                SignInButton(
+                                  Buttons.google,
+                                  onPressed: () async {
+                                    await AuthService().signInWithGoogle(context);
+                                  } ,
+                                 
+                                ),
+                              ]
+                            ),
+                            
+                            const SizedBox(height: 15), // Spacing between widgets
                       
-                            // already have an account log in
-                             Row(
+                            // Don't have an account - Register
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Text(
-                                  "Already have and account?",
+                                  "Don't have and account?",
 
                                   style:  TextStyle(
                                     color: Colors.white,
@@ -221,7 +170,7 @@ class _SignupPageState extends State<SignupPage> {
                                 GestureDetector(
                                   onTap: widget.onTap,
                                   child: const Text(
-                                    "Log In",
+                                    "Register Here",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),

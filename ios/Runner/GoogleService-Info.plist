@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>914243259256-7a0njpiu208cfvm5okmetd3qb3atdcdg.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.914243259256-7a0njpiu208cfvm5okmetd3qb3atdcdg</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>914243259256-02ugsivpn86j620qd51vss1e8dqf2t13.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDPeMzFIKfEALCC6I27654N2TxCYPUUoSk</string>
+	<key>GCM_SENDER_ID</key>
+	<string>914243259256</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.pantryScanner</string>
+	<key>PROJECT_ID</key>
+	<string>pantryscanner-dca28</string>
+	<key>STORAGE_BUCKET</key>
+	<string>pantryscanner-dca28.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:914243259256:ios:2281664d1cca37c326d68d</string>
+</dict>
+</plist>

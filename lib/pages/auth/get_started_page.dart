@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pantry_scanner/components/my_button.dart';
@@ -49,8 +47,7 @@ class GetStarted extends StatelessWidget {
             MyButton(
               text: "Get Started", 
               onTap: ()=>{
-                 // Navigate to Login/Signup page
-                 // TODO: we should use replace instead of pushing on top of getstarted
+                  // Navigate to Login/Signup page             
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const LoginOrSignup()),

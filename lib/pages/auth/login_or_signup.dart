@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pantry_scanner/pages/login_page.dart';
-import 'package:pantry_scanner/pages/signup_page.dart';
+import 'package:pantry_scanner/pages/auth/login_page.dart';
+import 'package:pantry_scanner/pages/auth/signup_page.dart';
 
 class LoginOrSignup extends StatefulWidget {
   const LoginOrSignup({super.key});
