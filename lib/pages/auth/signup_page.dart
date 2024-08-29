@@ -1,6 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,77 +7,35 @@ import 'package:pantry_scanner/components/my_button.dart';
 import 'package:pantry_scanner/components/my_textField.dart';
 import 'package:pantry_scanner/pages/helper/helper_functions.dart';
 import 'package:pantry_scanner/services/auth_service.dart';
+import 'package:sign_in_button/sign_in_button.dart';
 
-class LoginPage extends StatefulWidget {
+class SignupPage extends StatefulWidget {
 
   final void Function()? onTap;
 
-  const LoginPage({super.key, this.onTap});
+
+  const SignupPage({super.key,this.onTap});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignupPage> createState() => _SignupPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  
+class _SignupPageState extends State<SignupPage> {
+
+
+  final TextEditingController usernameController = TextEditingController();
+
   final TextEditingController emailController = TextEditingController();
 
   final TextEditingController passwordController = TextEditingController();
 
-  Future<void> login () async {
-      // show loading circle
-     showDialog(
-      context: context,
-      barrierDismissible: false, // Prevent closing the dialog by tapping outside
-      builder: (context) => const Center(
-      child: CircularProgressIndicator(),
-     ),
-     );
-
-
-      // try creating user
-      try{ 
-
-        // log in
-        UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-              email: emailController.text, 
-              password: passwordController.text);
-
-        // Check if the user profile already exists
-        DocumentSnapshot profileSnapshot = await FirebaseFirestore.instance
-            .collection('profiles')
-            .doc(userCredential.user!.uid)
-            .get();
-
-        // If the profile doesn't exist, create it
-        if (!profileSnapshot.exists) {
-          throw Error();
-        }
-
-        // pop loading circle
-        if(context.mounted) Navigator.pop(context);
-
-
-      }on FirebaseAuthException catch(error)
-      {
-            // pop loading circle
-            Navigator.pop(context);
-
-            // display error message
-            displayMessageToUser(error.code, context);
-      }finally{
-         // pop loading circle
-          Navigator.pop(context);
-
-      }
-
-    }
+  final TextEditingController confirmPasswordController = TextEditingController();
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       body: Stack(
         children: [
           // Background
@@ -119,9 +76,9 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       child: Column(
                         children: [
-                            // log in form 
+                            // Sign up form 
                             const Text(
-                              "Log In",
+                              "Sign Up",
                               style: TextStyle(
                                 fontSize: 38,
                                 fontWeight: FontWeight.bold,
@@ -129,25 +86,43 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
 
-                            const SizedBox(height: 25), // Spacing between widgets
+
+                             const SizedBox(height: 20), // Spacing between widgets
+                      
+                            // Username input
+                            MyTextField(hintText: "Username",
+                              obscureText: false, 
+                              controller: usernameController
+                            ),
+
+
+                            const SizedBox(height: 15), // Spacing between widgets
                       
                             // Email input
-                           MyTextField(hintText: "Email",
+                            MyTextField(hintText: "Email",
                               obscureText: false, 
                               controller: emailController
                             ),
                             
-                            const SizedBox(height: 20), // Spacing between widgets
+                            const SizedBox(height: 15), // Spacing between widgets
                       
                             // Password input
                             MyTextField(hintText: "Password",
                               obscureText: true, 
                               controller: passwordController
                             ),
-                            
+
                             const SizedBox(height: 15), // Spacing between widgets
                       
-                           // Forgot password
+                            // confirm Password input
+                            MyTextField(hintText: "Confirm Password",
+                              obscureText: true, 
+                              controller: confirmPasswordController
+                            ),
+                            
+                            const SizedBox(height: 9), // Spacing between widgets
+                      
+                            // Forgot password
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
@@ -163,48 +138,48 @@ class _LoginPageState extends State<LoginPage> {
                               ],
                             ),
                             
-                            const SizedBox(height: 15), // Spacing between widgets
+                            const SizedBox(height: 9), // Spacing between widgets
                       
-                            // Login button
+                            // Sign up button
                             MyButton(
-                              text: "Login", 
-                              onTap: login,
+                              text: "Sign Up", 
+                              onTap: () => AuthService().signup(context, emailController, passwordController, confirmPasswordController, usernameController),
                             ),
                           
-                            const SizedBox(height: 15), // Spacing between widgets
+                            const SizedBox(height: 7), // Spacing between widgets
 
                             //Divider line
                             const Text("Or",
                               style: TextStyle(
                                 color:Colors.white,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 25,
+                                fontSize: 20,
                               ),
                             ),
 
-                            const SizedBox(height: 15), // Spacing between widgets
 
-                            //Other login options
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
                                 //Google sign in button
-                                GestureDetector(
-                                  onTap: () => AuthService().signInWithGoogle(),
-                                  child: Image.asset('assets/images/google-signin.png',height: 55,),
-                                )
-                                
-                              ]
-                            ),
-                            
-                            const SizedBox(height: 15), // Spacing between widgets
+                                SignInButton(
+                                  Buttons.google,
+                                  onPressed: () async {
+                                    await AuthService().signInWithGoogle(context);
+                                  } ,
+                                 
+                                  ),
+                                ]
+                              ),
                       
-                            // Don't have an account - Register
-                            Row(
+                            const SizedBox(height: 8), // Spacing between widgets
+
+                            // already have an account log in
+                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Text(
-                                  "Don't have and account?",
+                                  "Already have and account?",
 
                                   style:  TextStyle(
                                     color: Colors.white,
@@ -214,7 +189,7 @@ class _LoginPageState extends State<LoginPage> {
                                 GestureDetector(
                                   onTap: widget.onTap,
                                   child: const Text(
-                                    "Register Here",
+                                    "Log In",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),

@@ -1,8 +1,8 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pantry_scanner/pages/get_started_page.dart';
-import 'package:pantry_scanner/pages/home_page.dart';
+import 'package:pantry_scanner/pages/auth/get_started_page.dart';
+import 'package:pantry_scanner/pages/Nav_Pages/Buttom_NavBar_Layout.dart';
 
 class Auth extends StatefulWidget {
   const Auth({super.key});
@@ -18,7 +18,7 @@ class _AuthState extends State<Auth> {
 
 
   void markGetStartedAsSeen() {
-    print("seen");
+    //print("seen");
     setState(() {
       hasSeenGetStarted = true;
     });
@@ -32,16 +32,15 @@ class _AuthState extends State<Auth> {
         builder: (context, snapshot){
           // user is logged in
           if(snapshot.hasData){
-            return const HomePage();
+            return const ButtomNavbarLayout();
           }
-
           // here we should check if player has seen get started page
-
+        
           // use is not logged in
           else{
             return const GetStarted();
           }
-
+         
         }),
     );
   }
