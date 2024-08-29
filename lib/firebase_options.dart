@@ -85,4 +85,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'pantryscanner-dca28.appspot.com',
     measurementId: 'G-QKRFVWYYKQ',
   );
+
 }

@@ -7,6 +7,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pantry_scanner/components/my_button.dart';
 import 'package:pantry_scanner/components/my_textField.dart';
 import 'package:pantry_scanner/pages/helper/helper_functions.dart';
+import 'package:pantry_scanner/services/auth_service.dart';
+import 'package:sign_in_button/sign_in_button.dart';
+//import 'package:pantry_scanner/services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
 
@@ -24,60 +27,10 @@ class _LoginPageState extends State<LoginPage> {
 
   final TextEditingController passwordController = TextEditingController();
 
-  Future<void> login () async {
-      // show loading circle
-     showDialog(
-      context: context,
-      barrierDismissible: false, // Prevent closing the dialog by tapping outside
-      builder: (context) => const Center(
-      child: CircularProgressIndicator(),
-     ),
-     );
-
-
-      // try creating user
-      try{ 
-
-        // log in
-        UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-              email: emailController.text, 
-              password: passwordController.text);
-
-        // Check if the user profile already exists
-        DocumentSnapshot profileSnapshot = await FirebaseFirestore.instance
-            .collection('profiles')
-            .doc(userCredential.user!.uid)
-            .get();
-
-        // If the profile doesn't exist, create it
-        if (!profileSnapshot.exists) {
-          throw Error();
-        }
-
-        // pop loading circle
-        if(context.mounted) Navigator.pop(context);
-
-
-      }on FirebaseAuthException catch(error)
-      {
-            // pop loading circle
-            Navigator.pop(context);
-
-            // display error message
-            displayMessageToUser(error.code, context);
-      }finally{
-         // pop loading circle
-          Navigator.pop(context);
-
-      }
-
-    }
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       body: Stack(
         children: [
           // Background
@@ -167,9 +120,39 @@ class _LoginPageState extends State<LoginPage> {
                             // Login button
                             MyButton(
                               text: "Login", 
-                              onTap: login,
+                              onTap: () async {
+                                await AuthService().login(context, emailController, passwordController);
+                              },
                             ),
                           
+                            const SizedBox(height: 15), // Spacing between widgets
+
+                            //Divider line
+                            const Text("Or",
+                              style: TextStyle(
+                                color:Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 25,
+                              ),
+                            ),
+
+                            const SizedBox(height: 15), // Spacing between widgets
+
+                            //Other login options
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                //Google sign in button
+                                SignInButton(
+                                  Buttons.google,
+                                  onPressed: () async {
+                                    await AuthService().signInWithGoogle(context);
+                                  } ,
+                                 
+                                ),
+                              ]
+                            ),
+                            
                             const SizedBox(height: 15), // Spacing between widgets
                       
                             // Don't have an account - Register

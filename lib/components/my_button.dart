@@ -7,10 +7,24 @@ class MyButton extends StatelessWidget {
 
   final String text;
   final void Function()? onTap;
+  final double? fontSize;
+  final double? horizontalPadding;
+  final double? verticalPadding;
+  final Color? color;
+  final double? height;
+  final double? width;
+  final double? borderRadius;
 
   const MyButton({
     super.key,
     required this.text,
+    this.fontSize,
+    this.width,
+    this.height,
+    this.borderRadius,
+    this.horizontalPadding,
+    this.verticalPadding,
+    this.color,
     required this.onTap
     });
 
@@ -20,16 +34,19 @@ class MyButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.black, //Theme.of(context).colorScheme.secondary,
-          borderRadius: BorderRadius.circular(12),
+          color: color ?? Colors.black, //Theme.of(context).colorScheme.secondary,
+          borderRadius: BorderRadius.circular(borderRadius ?? 12),
         ),
-        padding: const EdgeInsets.all(14),
+        padding: EdgeInsets.symmetric(horizontal: horizontalPadding ?? 14, vertical: verticalPadding ?? 10),
+        width: width ?? double.infinity,
+        height: height ?? 50,
         child: Center(
           child: Text(
             text,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 24,
+              fontSize: fontSize ?? 22,
+              color: Colors.white,
             ),
           ),
         ),

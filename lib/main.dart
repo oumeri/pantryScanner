@@ -6,7 +6,6 @@ import 'package:pantry_scanner/pages/auth/auth.dart';
 import 'package:pantry_scanner/theme/light_mode.dart';
 
 void main() async {
-  
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
@@ -19,8 +18,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Pantry Scanner',
       theme: lighMode,
+      debugShowCheckedModeBanner: false,
       home: const Auth(),
     );
   }

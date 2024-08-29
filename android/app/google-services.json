@@ -12,7 +12,20 @@
           "package_name": "com.example.pantry_scanner"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "914243259256-02ugsivpn86j620qd51vss1e8dqf2t13.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.pantry_scanner",
+            "certificate_hash": "f7f47c2fe14da40af8aad965daa9737a61aa4193"
+          }
+        },
+        {
+          "client_id": "914243259256-ih4ad4l97aeepibkj022fm3q6ptvclh5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA9BXfpkWdee73glyW4aUiurA458uRY37Y"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "914243259256-adborf1ilkuu102ih7eo81ocenqquqlg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "914243259256-7a0njpiu208cfvm5okmetd3qb3atdcdg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.pantryScanner"
+              }
+            }
+          ]
         }
       }
     }

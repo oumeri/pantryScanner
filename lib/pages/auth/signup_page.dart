@@ -6,6 +6,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pantry_scanner/components/my_button.dart';
 import 'package:pantry_scanner/components/my_textField.dart';
 import 'package:pantry_scanner/pages/helper/helper_functions.dart';
+import 'package:pantry_scanner/services/auth_service.dart';
+import 'package:sign_in_button/sign_in_button.dart';
 
 class SignupPage extends StatefulWidget {
 
@@ -29,71 +31,11 @@ class _SignupPageState extends State<SignupPage> {
 
   final TextEditingController confirmPasswordController = TextEditingController();
 
-  Future<void> signup () async {
-   // show loading circle
-    showDialog(
-      context: context,
-      barrierDismissible: false, // Prevent closing the dialog by tapping outside
-      builder: (context) => const Center(
-      child: CircularProgressIndicator(),
-     ),
-     );
-
-
-   // password match
-    if(passwordController.text != confirmPasswordController.text){
-      // pop loading circle
-      Navigator.pop(context);
-
-      // display a error message
-      displayMessageToUser("Password don't match", context);
-    }else{
-      // try creating user
-      try{ 
-
-        // create user
-        UserCredential userCredential = 
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
-              email: emailController.text, 
-              password: passwordController.text);
-
-
-        // create the user profile doc
-        await createUserProfile(userCredential.user!, usernameController.text);
-
-        // pop loading circle
-        Navigator.pop(context);
-
-       
-     
-
-      }on FirebaseAuthException catch(error)
-      {
-          // pop loading circle
-          Navigator.pop(context);
-
-          // display error message
-          displayMessageToUser(error.code, context);
-      } finally {
-         // pop loading circle
-          Navigator.pop(context);
-
-      }
-
-    }
-
-
-   
-
-  }
-
-
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       body: Stack(
         children: [
           // Background
@@ -134,7 +76,7 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                       child: Column(
                         children: [
-                            // log in form 
+                            // Sign up form 
                             const Text(
                               "Sign Up",
                               style: TextStyle(
@@ -145,16 +87,16 @@ class _SignupPageState extends State<SignupPage> {
                             ),
 
 
-                             const SizedBox(height: 25), // Spacing between widgets
+                             const SizedBox(height: 20), // Spacing between widgets
                       
-                            // Email input
+                            // Username input
                             MyTextField(hintText: "Username",
                               obscureText: false, 
                               controller: usernameController
                             ),
 
 
-                            const SizedBox(height: 25), // Spacing between widgets
+                            const SizedBox(height: 15), // Spacing between widgets
                       
                             // Email input
                             MyTextField(hintText: "Email",
@@ -162,7 +104,7 @@ class _SignupPageState extends State<SignupPage> {
                               controller: emailController
                             ),
                             
-                            const SizedBox(height: 20), // Spacing between widgets
+                            const SizedBox(height: 15), // Spacing between widgets
                       
                             // Password input
                             MyTextField(hintText: "Password",
@@ -170,7 +112,7 @@ class _SignupPageState extends State<SignupPage> {
                               controller: passwordController
                             ),
 
-                            const SizedBox(height: 20), // Spacing between widgets
+                            const SizedBox(height: 15), // Spacing between widgets
                       
                             // confirm Password input
                             MyTextField(hintText: "Confirm Password",
@@ -178,7 +120,7 @@ class _SignupPageState extends State<SignupPage> {
                               controller: confirmPasswordController
                             ),
                             
-                            const SizedBox(height: 15), // Spacing between widgets
+                            const SizedBox(height: 9), // Spacing between widgets
                       
                             // Forgot password
                             Row(
@@ -196,16 +138,42 @@ class _SignupPageState extends State<SignupPage> {
                               ],
                             ),
                             
-                            const SizedBox(height: 15), // Spacing between widgets
+                            const SizedBox(height: 9), // Spacing between widgets
                       
-                            // Login button
+                            // Sign up button
                             MyButton(
                               text: "Sign Up", 
-                              onTap:  signup,
+                              onTap: () => AuthService().signup(context, emailController, passwordController, confirmPasswordController, usernameController),
                             ),
                           
-                            const SizedBox(height: 15), // Spacing between widgets
+                            const SizedBox(height: 7), // Spacing between widgets
+
+                            //Divider line
+                            const Text("Or",
+                              style: TextStyle(
+                                color:Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
+
+
+                            Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                                //Google sign in button
+                                SignInButton(
+                                  Buttons.google,
+                                  onPressed: () async {
+                                    await AuthService().signInWithGoogle(context);
+                                  } ,
+                                 
+                                  ),
+                                ]
+                              ),
                       
+                            const SizedBox(height: 8), // Spacing between widgets
+
                             // already have an account log in
                              Row(
                               mainAxisAlignment: MainAxisAlignment.center,
