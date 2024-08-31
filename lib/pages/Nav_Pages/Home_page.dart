@@ -33,7 +33,7 @@ class HomePage extends StatelessWidget {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 5.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -115,13 +115,23 @@ class HomePage extends StatelessWidget {
               ),
               
               const SizedBox(height: 12),
+
+              // title
+              const Text(
+                'My Pantry',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
         
               // Pantry Section
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(
                     color: const Color(0xFFD9D9D9),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(10),
                     image: const DecorationImage(
                       image: AssetImage('assets/images/BackgroundPatternFood.png'), 
                       fit: BoxFit.cover
@@ -149,7 +159,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
 
               // Add item button
               Center(
