@@ -7,13 +7,12 @@ class FavoritePage extends StatelessWidget {
   const FavoritePage({super.key});
 
 
-   static const List<Widget> items = [
-       Text('Item 1', style: TextStyle(fontSize: 20, color: Colors.black)),
-      // Text('Item 2', style: TextStyle(fontSize: 20, color: Colors.black)),
-      // Text('Item 3', style: TextStyle(fontSize: 20, color: Colors.black)),
-      // Text('Item 4', style: TextStyle(fontSize: 20, color: Colors.black)),
-      // Text('Item 5', style: TextStyle(fontSize: 20, color: Colors.black)),
-      
+   static const List<Map<String, dynamic>> items = [
+       {"name": "Item 1", "image": "assets/images/itemImageTest.png"},
+       {"name": "Item 2", "image": "assets/images/itemImageTest.png"},
+       {"name": "Item 3", "image": "assets/images/itemImageTest.png"},
+       {"name": "Item 4", "image": "assets/images/itemImageTest.png"},
+       {"name": "Item 5", "image": "assets/images/itemImageTest.png"},
     ];
 
   @override
@@ -115,7 +114,10 @@ class FavoritePage extends StatelessWidget {
                       ),
                       itemBuilder: (context, index) {
                         final item = items[index];
-                        return Itemcard(item: item);
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Itemcard(item: item),
+                        );
                       },
                       itemCount: items.length, // Adjust this to the number of items you have
                   ),
