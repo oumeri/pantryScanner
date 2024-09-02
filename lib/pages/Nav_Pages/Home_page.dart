@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pantry_scanner/components/historyCard.dart';
-import 'package:pantry_scanner/components/itemCard.dart';
+import 'package:pantry_scanner/components/pantryItemCard.dart';
 import 'package:pantry_scanner/components/my_button.dart';
 
 class HomePage extends StatelessWidget {
@@ -18,13 +18,12 @@ class HomePage extends StatelessWidget {
     ];
 
 
-  static const List<Widget> items = [
-      Text('Item 1', style: TextStyle(fontSize: 20, color: Colors.black)),
-      Text('Item 2', style: TextStyle(fontSize: 20, color: Colors.black)),
-      Text('Item 3', style: TextStyle(fontSize: 20, color: Colors.black)),
-      Text('Item 4', style: TextStyle(fontSize: 20, color: Colors.black)),
-      Text('Item 5', style: TextStyle(fontSize: 20, color: Colors.black)),
-      
+ static const List<Map<String, dynamic>> items = [
+       {"name": "Item 1", "image": "assets/images/itemImageTest.png", "status": "Good", "location": "Fridge", "boughtTime": "2022-01-01"},
+       {"name": "Item 2", "image": "assets/images/itemImageTest.png", "status": "Consume Soon", "location": "Fridge", "boughtTime": "2022-01-01"},
+       {"name": "Item 3", "image": "assets/images/itemImageTest.png", "status": "Expired", "location": "Fridge", "boughtTime": "2022-01-01"},
+       {"name": "Item 4", "image": "assets/images/itemImageTest.png", "status": "Good", "location": "Fridge", "boughtTime": "2022-01-01"},
+       {"name": "Item 5", "image": "assets/images/itemImageTest.png", "status": "Good", "location": "Fridge", "boughtTime": "2022-01-01"},
     ];
 
   @override
@@ -149,13 +148,22 @@ class HomePage extends StatelessWidget {
                               ),
                             ),
                           )
-                        : GridView.count(
-                            crossAxisCount: 2, // Number of items per row
-                            crossAxisSpacing: 10.0, // Horizontal space between items
-                            mainAxisSpacing: 10.0, // Vertical space between items
-                            padding: const EdgeInsets.all(20.0),
-                            children: items.map((item) => Itemcard(item: item)).toList(),
-                          ),
+                        : GridView.builder(
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 1,
+                              crossAxisSpacing: 1,
+                              childAspectRatio: 2/3,
+                            ),
+                            itemBuilder: (context, index) {
+                              final item = items[index];
+                              return Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: PantryItemCard(item: item),
+                              );
+                            },
+                            itemCount: items.length, // Adjust this to the number of items you have
+                        ),
                 ),
               ),
               
