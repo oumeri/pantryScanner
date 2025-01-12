@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class Historycard extends StatelessWidget {
+class Lostitemcard extends StatelessWidget {
 
-  final Widget history;
+  final Widget lostItem;
 
 
-  const Historycard({
+  const Lostitemcard({
       super.key,
-      required this.history,
+      required this.lostItem,
       });
 
 
@@ -22,7 +22,7 @@ class Historycard extends StatelessWidget {
         color: Colors.grey[800],
         borderRadius: BorderRadius.circular(8),
         ),
-        child: Center(child: history),
+        child: Center(child: lostItem),
      );
   }
 }

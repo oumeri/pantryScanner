@@ -36,7 +36,7 @@ class _HomePageState extends State<ButtomNavbarLayout> {
     ProfilePage()
   ];
 
-  void _onItemTapped(int index) {
+  void onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -61,7 +61,7 @@ class _HomePageState extends State<ButtomNavbarLayout> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: List.generate(_icons.length, (index) {
             return GestureDetector(
-              onTap: () => _onItemTapped(index),
+              onTap: () => onItemTapped(index),
               child: Container(
                 decoration: BoxDecoration(
                   color: _selectedIndex == index ? const Color(0xFF3BD752) : Colors.white,

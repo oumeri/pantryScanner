@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pantry_scanner/components/my_button.dart';
 import 'package:pantry_scanner/pages/dynamicPages/itemDetailPage.dart';
 
 class PantryItemCard extends StatelessWidget {
