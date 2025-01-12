@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:pantry_scanner/components/historyCard.dart';
+import 'package:pantry_scanner/components/lostItemCard.dart';
 import 'package:pantry_scanner/components/pantryItemCard.dart';
-import 'package:pantry_scanner/components/my_button.dart';
+import 'package:pantry_scanner/pages/Nav_Pages/Scanner_page.dart';
+import 'package:pantry_scanner/pages/SecondaryPages/Lost_Items_page.dart';
+import 'package:pantry_scanner/pages/contexts/AppContext.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
 
   const HomePage({super.key});
 
-
-  static const List<Widget> history = [
-      Text('History 1', style: TextStyle(fontSize: 20)),
-      Text('History 2', style: TextStyle(fontSize: 20)),
-      Text('History 3', style: TextStyle(fontSize: 20)),
-      Text('History 4', style: TextStyle(fontSize: 20)),
-      Text('History 5', style: TextStyle(fontSize: 20)),
+  static const List<Widget> lostItems = [
+       Text('Item 1', style: TextStyle(fontSize: 20)),
+       Text('Item 2', style: TextStyle(fontSize: 20)),
+       Text('Item 3', style: TextStyle(fontSize: 20)),
+       Text('Item 4', style: TextStyle(fontSize: 20)),
+       Text('Item 5', style: TextStyle(fontSize: 20)),
       
     ];
 
@@ -26,8 +28,28 @@ class HomePage extends StatelessWidget {
        {"name": "Item 5", "image": "assets/images/itemImageTest.png", "status": "Good", "location": "Fridge", "boughtTime": "2022-01-01"},
     ];
 
+  void navigateToLostItemsPage(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const LostItemsPage(),
+      ),
+    );
+  }
+
+  void navigateToScanePage(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ScannerPage(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final appContext = Provider.of<AppContext>(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -37,9 +59,9 @@ class HomePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Top Text: "Hello, Simo"
-              const Text(
-                'Hello, Simo',
-                style: TextStyle(
+              Text(
+                'Hello, ${appContext.userProfile?['username']}',
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color:Colors.black
@@ -62,7 +84,7 @@ class HomePage extends StatelessWidget {
                     Row(
                       children: [
                         const Text(
-                          'History',
+                          'Lost Items',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -72,43 +94,88 @@ class HomePage extends StatelessWidget {
 
                         // view all button
                         const Spacer(),
-                        GestureDetector(
-                          onTap: () {},
-                          child: const Row(
-                            children: [
-                               Text(
-                                'View all',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.white,
-                                ),
-                              ),
+                        lostItems.isNotEmpty
+                            ?  GestureDetector(
+                                onTap: () => navigateToLostItemsPage(context),
+                                child: const Row(
+                                  children: [
+                                    Text(
+                                      'View all',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                      ),
+                                    ),
 
-                              Icon(
-                                Icons.arrow_forward,
-                                color: Colors.white,
-                                size: 16,
-                              ),
-                            ],
-                          ),
-                        ),
+                                    Icon(
+                                      Icons.arrow_forward,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Container(),
 
                       ],
                     ),
                     const SizedBox(height: 16),
         
                     // History items
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: List.generate(history.length, (index) {
-                          return Historycard(
-                            history: history[index],
-                          );
-                        }),
-                      ),
-                    ),
+                    lostItems.isNotEmpty
+                        ? SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: List.generate(lostItems.length, (index) {
+                                return Lostitemcard(
+                                  lostItem: lostItems[index],
+                                );
+                              }),
+                            ),
+                          )
+                        : Column(
+                            children: [
+                              const SizedBox(
+                                height: 100,
+                                child: Center(
+                                  child: Text(
+                                    'Nothing went to waste so far',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () => navigateToLostItemsPage(context),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[800],
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: const Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'See details',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+
+                    
                   ],
                 ),
               ),
@@ -167,23 +234,6 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               
-              const SizedBox(height: 8),
-
-              // Add item button
-              Center(
-                child: MyButton(
-                  onTap: () {},
-                  text: "+ Add item", 
-                  fontSize: 12,
-                  color: Colors.black,
-                  width: 105,
-                  height: 25,
-                  borderRadius: 20,
-                  horizontalPadding: 20,
-                  verticalPadding: 5,
-                  ),
-              )
-
             ],
           ),
         ),

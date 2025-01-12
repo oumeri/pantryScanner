@@ -1,11 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pantry_scanner/components/my_button.dart';
 import 'package:pantry_scanner/components/my_textField.dart';
-import 'package:pantry_scanner/pages/helper/helper_functions.dart';
 import 'package:pantry_scanner/services/auth_service.dart';
 import 'package:sign_in_button/sign_in_button.dart';
 

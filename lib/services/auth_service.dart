@@ -4,13 +4,16 @@ import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:google_sign_in/google_sign_in.dart";
+import "package:pantry_scanner/pages/contexts/AppContext.dart";
 import "package:pantry_scanner/pages/helper/helper_functions.dart";
+import "package:provider/provider.dart";
 
 
 class AuthService{
 
   // Google sign in
   Future<void> signInWithGoogle(BuildContext context) async {
+    final appContext = Provider.of<AppContext>(context, listen: false);
 
     // show loading circle
      showDialog(
@@ -56,7 +59,7 @@ class AuthService{
         if (!profileSnapshot.exists) {
           // Check if the user is not null
           // Create the user profile document
-          await createUserProfile(firebaseUser, firebaseUser.displayName ?? 'Anonymous');
+          await createUserProfile(firebaseUser, firebaseUser.displayName ?? 'Anonymous',appContext);
         }
 
        
@@ -77,6 +80,8 @@ class AuthService{
 
 
   Future<void> login (BuildContext context, TextEditingController emailController, TextEditingController passwordController) async {
+    final appContext = Provider.of<AppContext>(context, listen: false);
+
       // show loading circle
      showDialog(
       context: context,
@@ -106,6 +111,8 @@ class AuthService{
           throw Error();
         }
 
+        appContext.setUserProfile(await getUserProfile());
+
         // To pop the loading circle
         Navigator.pop(context);
         // To navigate to the next page
@@ -122,6 +129,8 @@ class AuthService{
 
 
   Future<void> signup (BuildContext context, TextEditingController emailController, TextEditingController passwordController, TextEditingController confirmPasswordController, TextEditingController usernameController) async {
+    final appContext = Provider.of<AppContext>(context, listen: false);
+
    // show loading circle
     showDialog(
       context: context,
@@ -151,7 +160,7 @@ class AuthService{
 
 
         // create the user profile doc
-        await createUserProfile(userCredential.user!, usernameController.text);
+        await createUserProfile(userCredential.user!, usernameController.text, appContext);
 
          // To pop the loading circle
         Navigator.pop(context);
@@ -175,5 +184,41 @@ class AuthService{
    
 
   }
+
+
+  Future<void> createUserProfile(User user, String username,AppContext appContext) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    // Define the profile data
+    Map<String, dynamic> userProfile = {
+      'uid': user.uid,
+      'email': user.email,
+      "username": username,
+      'firstName': '',
+      'lastName': '',
+      'photoURL': user.photoURL ?? '',
+      'createdAt': FieldValue.serverTimestamp(),
+    };
+
+    // Save the profile data in Firestore under 'profiles' collection
+    await firestore.collection('profiles').doc(user.uid).set(userProfile);
+    appContext.setUserProfile(await getUserProfile());
+    
+  }
+
+  Future<DocumentSnapshot> getUserProfile() async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser == null) {
+      throw Exception("No user is currently signed in.");
+    }
+
+    return await FirebaseFirestore.instance
+        .collection('profiles')
+        .doc(currentUser.uid)
+        .get();
+  }
+
+
 
 }
