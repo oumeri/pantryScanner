@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:pantry_scanner/components/editable_text_field.dart';
-import 'package:pantry_scanner/components/my_button.dart';
-import 'package:pantry_scanner/pages/contexts/AppContext.dart';
+import 'package:pantry_scanner/presentation/widgets/editable_text_field.dart';
+import 'package:pantry_scanner/presentation/widgets/my_button.dart';
+import 'package:pantry_scanner/contexts/AppContext.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -67,21 +67,27 @@ class ProfilePage extends StatelessWidget {
                     child: CircleAvatar(
                       radius: 80,
                       backgroundColor: Colors.green[200],
-                      child: SvgPicture.asset(
-                        appContext.userProfile?['photoURL'] == '' ? 'assets/Icons/profile.svg' :  appContext.userProfile?['photoURL'],
-                        color: Colors.white,
-                        height: 100,
-                        width: 100,
-                      ),
-        
+                      child: appContext.userProfile?['profilePic'] != null
+                      ? SvgPicture.network(
+                          appContext.userProfile!['profilePic'],
+                          color: Colors.white,
+                          height: 100,
+                          width: 100,
+                        )
+                      : SvgPicture.asset(
+                          'assets/Icons/profile.svg',
+                          color: Colors.white,
+                          height: 100,
+                          width: 100,
+                        ),
                     ),
                   ),
             
                   // Name and Email fields
                   const SizedBox(height: 30),
                   EditableTextField(
-                    initialValue: appContext.userProfile?['username'] ?? '',
-                    labelText: 'Username',
+                    initialValue: appContext.userProfile?['name'] ?? '',
+                    labelText: 'Name',
                     onChanged: (value) {
                       print("Updated username: $value");
                     },

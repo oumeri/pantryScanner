@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:pantry_scanner/components/empty.dart';
-import 'package:pantry_scanner/components/itemCard.dart';
+import 'package:pantry_scanner/presentation/widgets/empty.dart';
+import 'package:pantry_scanner/presentation/widgets/itemCard.dart';
 
-class ItemlistPage extends StatelessWidget {
-  const ItemlistPage({super.key});
+class FavoritePage extends StatelessWidget {
+  const FavoritePage({super.key});
 
 
-    static const List<Map<String, dynamic>> items = [
-      //{"name": "Item 1", "image": "assets/images/itemImageTest.png"},
-      //{"name": "Item 2", "image": "assets/images/itemImageTest.png"},
-      //{"name": "Item 3", "image": "assets/images/itemImageTest.png"},
-      //{"name": "Item 4", "image": "assets/images/itemImageTest.png"},
-      //{"name": "Item 5", "image": "assets/images/itemImageTest.png"},
+   static const List<Map<String, dynamic>> items = [
     ];
 
   @override
@@ -30,7 +25,7 @@ class ItemlistPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                  Text(
-                    'Items List',
+                    'Favorites',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -114,7 +109,10 @@ class ItemlistPage extends StatelessWidget {
                       ),
                       itemBuilder: (context, index) {
                         final item = items[index];
-                        return Itemcard(item: item);
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Itemcard(item: item),
+                        );
                       },
                       itemCount: items.length, // Adjust this to the number of items you have
                   ),

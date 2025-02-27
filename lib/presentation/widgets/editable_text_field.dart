@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pantry_scanner/components/my_text_field.dart';
+import 'package:pantry_scanner/presentation/widgets/my_text_field.dart';
 
 class EditableTextField extends StatefulWidget {
   final String initialValue;

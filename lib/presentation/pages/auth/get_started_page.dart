@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:pantry_scanner/components/my_button.dart';
-import 'package:pantry_scanner/pages/auth/login_or_signup.dart';
+import 'package:pantry_scanner/presentation/widgets/my_button.dart';
+import 'package:pantry_scanner/presentation/pages/auth/login_or_signup.dart';
 
 class GetStarted extends StatelessWidget {
   

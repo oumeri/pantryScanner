@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pantry_scanner/pages/dynamicPages/itemDetailPage.dart';
+import 'package:pantry_scanner/presentation/pages/dynamicPages/itemDetailPage.dart';
 
 class PantryItemCard extends StatelessWidget {
 
@@ -16,9 +16,9 @@ class PantryItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
 
     // Determine the color based on the status
-    Color statusColor = (item["status"] == "Good")
+    Color statusColor = (item["state"] == "fresh")
         ? Colors.green
-        : (item["status"] == "Consume Soon")
+        : (item["state"] == "Semi-fresh")
             ? Colors.orange
             : const Color.fromARGB(255, 201, 3, 3);
 
@@ -79,7 +79,7 @@ class PantryItemCard extends StatelessWidget {
                           topRight: Radius.circular(8), // Top right corner
                         ),
                       image: DecorationImage(
-                        image: AssetImage(item["image"] ?? ''),
+                        image: AssetImage(item["imageUrl"] ?? ''),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -96,7 +96,7 @@ class PantryItemCard extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              item["name"] ?? '',
+                              '${item["name"]} (x${item["quantity"]})', // Concatenating name and quantity
                               style: const TextStyle(
                                 fontSize: 18,
                                 color: Colors.black,
@@ -105,6 +105,7 @@ class PantryItemCard extends StatelessWidget {
                             ),
                           ],
                         ),
+
                         
                         const SizedBox(height: 4),
                         
@@ -113,32 +114,43 @@ class PantryItemCard extends StatelessWidget {
                           children: [
                             const Icon(Icons.calendar_today, size: 16, color: Colors.black54),
                             const SizedBox(width: 4),
-                            Text(
-                              'Bought ${item["boughtTime"]}',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.black54,
+                            Expanded(
+                              child: Text(
+                                'Purchased ${item["purchaseDate"]}',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.black54,
+                                ),
+                                softWrap: true, // Allows text to wrap
+                                overflow: TextOverflow.visible, // Ensures text is displayed fully
                               ),
                             ),
+                            
                           ],
                         ),
                         
                         const SizedBox(height: 4),
                         
-                        // Location
+                        // storage place
                         Row(
                           children: [
                             const Icon(Icons.kitchen, size: 16, color: Colors.black54),
                             const SizedBox(width: 4),
-                            Text(
-                              'In the ${item["location"]}',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.black54,
+                            Expanded(
+                              child: Text(
+                                'In the ${item["storagePlace"]}',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.black54,
+                                ),
+                                softWrap: true, // Allows text to wrap
+                                overflow: TextOverflow.visible, // Ensures text is displayed fully
                               ),
                             ),
                           ],
                         ),
+
+                       
                       ],
                     ),
                   ),
@@ -166,7 +178,7 @@ class PantryItemCard extends StatelessWidget {
                     borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(16), bottomRight: Radius.circular(16)),
                   ),
                   child: Text(
-                    item["status"] ?? '',
+                    item["state"] ?? '',
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
