@@ -1,32 +1,107 @@
 import 'package:flutter/material.dart';
-import 'package:pantry_scanner/components/lostItemCard.dart';
-import 'package:pantry_scanner/components/pantryItemCard.dart';
-import 'package:pantry_scanner/pages/Nav_Pages/Scanner_page.dart';
-import 'package:pantry_scanner/pages/SecondaryPages/Lost_Items_page.dart';
-import 'package:pantry_scanner/pages/contexts/AppContext.dart';
+import 'package:pantry_scanner/presentation/widgets/lostItemCard.dart';
+import 'package:pantry_scanner/presentation/widgets/pantryItemCard.dart';
+import 'package:pantry_scanner/presentation/pages/Nav_Pages/Scanner_page.dart';
+import 'package:pantry_scanner/presentation/pages/SecondaryPages/Lost_Items_page.dart';
+import 'package:pantry_scanner/contexts/AppContext.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
 
   const HomePage({super.key});
 
-  static const List<Widget> lostItems = [
-       Text('Item 1', style: TextStyle(fontSize: 20)),
-       Text('Item 2', style: TextStyle(fontSize: 20)),
-       Text('Item 3', style: TextStyle(fontSize: 20)),
-       Text('Item 4', style: TextStyle(fontSize: 20)),
-       Text('Item 5', style: TextStyle(fontSize: 20)),
-      
-    ];
+static const List<Map<String, dynamic>> lostItems = [
+  {
+    "itemId": "apple",
+    "name": "Apple",
+    "quantityLost": 3,
+    "lostDate": "timestamp", // Replace with actual DateTime or timestamp
+    "storagePlace": "Refrigerator"
+  },
+  {
+    "itemId": "banana",
+    "name": "Banana",
+    "quantityLost": 2,
+    "lostDate": "timestamp",
+    "storagePlace": "Kitchen Counter"
+  },
+  {
+    "itemId": "milk",
+    "name": "Milk",
+    "quantityLost": 1,
+    "lostDate": "timestamp",
+    "storagePlace": "Fridge Door"
+  },
+  {
+    "itemId": "cheese",
+    "name": "Cheese",
+    "quantityLost": 1,
+    "lostDate": "timestamp",
+    "storagePlace": "Fridge Drawer"
+  },
+  {
+    "itemId": "bread",
+    "name": "Bread",
+    "quantityLost": 1,
+    "lostDate": "timestamp",
+    "storagePlace": "Pantry"
+  }
+];
 
 
  static const List<Map<String, dynamic>> items = [
-       {"name": "Item 1", "image": "assets/images/itemImageTest.png", "status": "Good", "location": "Fridge", "boughtTime": "2022-01-01"},
-       {"name": "Item 2", "image": "assets/images/itemImageTest.png", "status": "Consume Soon", "location": "Fridge", "boughtTime": "2022-01-01"},
-       {"name": "Item 3", "image": "assets/images/itemImageTest.png", "status": "Expired", "location": "Fridge", "boughtTime": "2022-01-01"},
-       {"name": "Item 4", "image": "assets/images/itemImageTest.png", "status": "Good", "location": "Fridge", "boughtTime": "2022-01-01"},
-       {"name": "Item 5", "image": "assets/images/itemImageTest.png", "status": "Good", "location": "Fridge", "boughtTime": "2022-01-01"},
-    ];
+  {
+    "itemId": "apple",
+    "name": "Apple",
+    "purchaseDate": "2024-06-10",
+    "storagePlace": "Refrigerator",
+    "state": "fresh",
+    "quantity": 3,
+    "imageUrl": "assets/images/itemImageTest.png",
+    "expiryDate": "2024-06-20"
+  },
+  {
+    "itemId": "banana",
+    "name": "Banana",
+    "purchaseDate": "2024-06-12",
+    "storagePlace": "Kitchen Counter",
+    "state": "fresh",
+    "quantity": 6,
+    "imageUrl": "assets/images/itemImageTest.png",
+    "expiryDate": "2024-06-18"
+  },
+  {
+    "itemId": "milk",
+    "name": "Milk",
+    "purchaseDate": "2024-06-08",
+    "storagePlace": "Refrigerator",
+    "state": "rotten",
+    "quantity": 1,
+    "imageUrl": "assets/images/itemImageTest.png",
+    "expiryDate": "2024-06-14"
+  },
+  {
+    "itemId": "bread",
+    "name": "Bread",
+    "purchaseDate": "2024-06-09",
+    "storagePlace": "Pantry",
+    "state": "Semi-fresh",
+    "quantity": 1,
+    "imageUrl": "assets/images/itemImageTest.png",
+    "expiryDate": "2024-06-15"
+  },
+  {
+    "itemId": "cheese",
+    "name": "Cheese",
+    "purchaseDate": "2024-06-05",
+    "storagePlace": "Refrigerator",
+    "state": "rotten",
+    "quantity": 1,
+    "imageUrl": "assets/images/itemImageTest.png",
+    "expiryDate": "2024-06-10"
+  }
+];
+
 
   void navigateToLostItemsPage(BuildContext context) {
     Navigator.push(
@@ -60,7 +135,7 @@ class HomePage extends StatelessWidget {
             children: [
               // Top Text: "Hello, Simo"
               Text(
-                'Hello, ${appContext.userProfile?['username']}',
+                'Hello, ${appContext.userProfile?['name']}',
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -70,7 +145,8 @@ class HomePage extends StatelessWidget {
              
               const SizedBox(height: 16),
         
-              // History Section
+
+              // Lost items Section
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
@@ -80,7 +156,7 @@ class HomePage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // History title
+                    // Lost items title
                     Row(
                       children: [
                         const Text(
@@ -92,10 +168,10 @@ class HomePage extends StatelessWidget {
                           ),
                         ),
 
-                        // view all button
+                        // View all button
                         const Spacer(),
                         lostItems.isNotEmpty
-                            ?  GestureDetector(
+                            ? GestureDetector(
                                 onTap: () => navigateToLostItemsPage(context),
                                 child: const Row(
                                   children: [
@@ -106,7 +182,6 @@ class HomePage extends StatelessWidget {
                                         color: Colors.white,
                                       ),
                                     ),
-
                                     Icon(
                                       Icons.arrow_forward,
                                       color: Colors.white,
@@ -116,20 +191,20 @@ class HomePage extends StatelessWidget {
                                 ),
                               )
                             : Container(),
-
                       ],
                     ),
                     const SizedBox(height: 16),
-        
-                    // History items
+
+                    // Lost items display
                     lostItems.isNotEmpty
                         ? SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: List.generate(lostItems.length, (index) {
+                                var item = lostItems[index];
                                 return Lostitemcard(
-                                  lostItem: lostItems[index],
+                                  lostItem: item,
                                 );
                               }),
                             ),
@@ -167,20 +242,18 @@ class HomePage extends StatelessWidget {
                                           color: Colors.white,
                                         ),
                                       ),
-                                      
                                     ],
                                   ),
                                 ),
                               ),
                             ],
-                          )
-
-                    
+                          ),
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 12),
+
 
               // title
               const Text(

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:pantry_scanner/pages/Nav_Pages/Favorite_page.dart';
-import 'package:pantry_scanner/pages/Nav_Pages/Home_page.dart';
-import 'package:pantry_scanner/pages/Nav_Pages/ItemList_page.dart';
-import 'package:pantry_scanner/pages/Nav_Pages/Profile_page.dart';
-import 'package:pantry_scanner/pages/Nav_Pages/Scanner_page.dart';
+import 'package:pantry_scanner/presentation/pages/Nav_Pages/Favorite_page.dart';
+import 'package:pantry_scanner/presentation/pages/Nav_Pages/Home_page.dart';
+import 'package:pantry_scanner/presentation/pages/Nav_Pages/ItemList_page.dart';
+import 'package:pantry_scanner/presentation/pages/Nav_Pages/Profile_page.dart';
+import 'package:pantry_scanner/presentation/pages/Nav_Pages/Scanner_page.dart';
 
 class ButtomNavbarLayout extends StatefulWidget {
   const ButtomNavbarLayout({super.key});

@@ -1,8 +1,8 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pantry_scanner/pages/auth/get_started_page.dart';
-import 'package:pantry_scanner/pages/Nav_Pages/Buttom_NavBar_Layout.dart';
+import 'package:pantry_scanner/presentation/pages/auth/get_started_page.dart';
+import 'package:pantry_scanner/presentation/pages/Nav_Pages/Buttom_NavBar_Layout.dart';
 
 class Auth extends StatefulWidget {
   const Auth({super.key});

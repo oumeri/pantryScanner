@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pantry_scanner/pages/dynamicPages/itemDetailPage.dart';
+import 'package:pantry_scanner/presentation/pages/dynamicPages/itemDetailPage.dart';
 
 class Itemcard extends StatelessWidget {
 

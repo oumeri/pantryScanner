@@ -10,13 +10,14 @@ class ItemDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color statusColor = _getStatusColor(item["status"]);
-    String statusText = item["status"] ?? "Unknown";
+    Color statusColor = _getStatusColor(item["state"]);
+    String statusText = item["state"] ?? "Unknown";
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: Text(item["name"], style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        title: Text(item["name"],
+            style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.white,
         iconTheme: const IconThemeData(color: Colors.black),
         elevation: 0,
@@ -32,15 +33,15 @@ class ItemDetailPage extends StatelessWidget {
                 alignment: Alignment.topCenter,
                 children: [
                   Hero(
-                    tag: item["image"],
+                    tag: item["imageUrl"],
                     child: Container(
                       height: 250,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         image: DecorationImage(
-                          image: item["image"] != null && item["image"].isNotEmpty
-                              ? AssetImage(item["image"]) as ImageProvider
-                              : const AssetImage('assets/images/placeholder.png'),
+                          image: item["imageUrl"] != null && item["imageUrl"].isNotEmpty
+                              ? const AssetImage('assets/images/itemImageTest.png') //NetworkImage(item["imageUrl"]) as ImageProvider
+                              : const AssetImage('assets/images/itemImageTest.png'),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -49,7 +50,7 @@ class ItemDetailPage extends StatelessWidget {
                   // Status Badge on top of the image
                   Positioned(
                     child: Container(
-                      padding: const EdgeInsets.only(bottom: 2, left: 3,right: 3),
+                      padding: const EdgeInsets.only(bottom: 2, left: 3, right: 3),
                       decoration: const BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.only(
@@ -79,12 +80,12 @@ class ItemDetailPage extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 20),
-              // Uniform Info Cards with white background
+              // Information Cards
               _buildInfoCard(Icons.label, "Name", item["name"] ?? "No Name"),
-              _buildInfoCard(Icons.calendar_today, "Bought on", item["boughtTime"] ?? "Unknown"),
-              _buildInfoCard(Icons.location_on, "Location", item["location"] ?? "Unknown"),
-              if (item["description"] != null && item["description"].isNotEmpty)
-                _buildInfoCard(Icons.description, "Description", item["description"]),
+              _buildInfoCard(Icons.calendar_today, "Purchase Date", item["purchaseDate"] ?? "Unknown"),
+              _buildInfoCard(Icons.event, "Expiry Date", item["expiryDate"] ?? "Unknown"),
+              _buildInfoCard(Icons.location_on, "Storage Place", item["storagePlace"] ?? "Unknown"),
+              _buildInfoCard(Icons.inventory, "Quantity", item["quantity"].toString()),
             ],
           ),
         ),
@@ -111,11 +112,11 @@ class ItemDetailPage extends StatelessWidget {
 
   Color _getStatusColor(String? status) {
     switch (status?.toLowerCase()) {
-      case 'good':
+      case 'fresh':
         return Colors.green;
-      case 'expired':
+      case 'rotten':
         return Colors.red;
-      case 'consume soon':
+      case 'Semi-fresh':
         return Colors.orange;
       default:
         return Colors.grey;
