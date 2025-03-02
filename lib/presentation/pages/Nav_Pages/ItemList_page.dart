@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pantry_scanner/core/services/item_service.dart';
 import 'package:pantry_scanner/presentation/widgets/empty.dart';
 
 class ItemlistPage extends StatefulWidget {
@@ -10,31 +12,35 @@ class ItemlistPage extends StatefulWidget {
 }
 
 class _ItemlistPageState extends State<ItemlistPage> {
-  static final List<Map<String, dynamic>> items = [
-    {
-      "itemId": "apple",
-      "name": "Apple",
-      "category": "Fruit",
-      "imageUrl" : "assets/images/itemImageTest.png",
-      "averageShelfLife": "10 days",
-      "nutrition": {
-        "Calories": 52,
-        "Carbohydrates": 14,
-        "Fat": 0.2,
-        "Protein": 0.3,
-        "Sugar": 10
-      },
-      "tips": "Keep apples in a cool, dry place."
-    },
-  ];
 
-  List<Map<String, dynamic>> filteredItems = List.from(items);
+  final ItemService _itemService = ItemService();
+  List<DocumentSnapshot> allItems = [];
+  List<DocumentSnapshot> filteredItems = [];
   TextEditingController searchController = TextEditingController();
+
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchItems();
+  }
+
+ Future<void> _fetchItems() async {
+  final fetchedItems = await _itemService.fetchAllItems();
+  setState(() {
+    allItems = fetchedItems;
+    filteredItems = allItems;
+    isLoading = false;
+  });
+}
+
 
   void _filterItems(String query) {
     setState(() {
-      filteredItems = items
-          .where((item) => item["name"].toLowerCase().contains(query.toLowerCase()))
+      filteredItems = allItems
+          .where((item) =>
+              (item['name'] as String).toLowerCase().contains(query.toLowerCase()))
           .toList();
     });
   }
@@ -60,88 +66,93 @@ class _ItemlistPageState extends State<ItemlistPage> {
               const SizedBox(height: 16),
               _buildSearchBar(),
               const SizedBox(height: 20),
-               Expanded(
-                  child: filteredItems.isEmpty
-                      ? const Center(child: Empty(text: "No items found"))
-                      : GridView.builder(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 12,
-                            crossAxisSpacing: 12,
-                            childAspectRatio: 0.75,
-                          ),
-                          itemCount: filteredItems.length,
-                          itemBuilder: (context, index) {
-                            final item = filteredItems[index];
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ItemDetailPage(item: item),
-                                  ),
-                                );
-                              },
-                              child: Card(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                elevation: 4,
-                                color: Colors.white,
-                                child: Column(
-                                  children: [
-                                    // Image takes up half the card
-                                    Expanded(
-                                      flex: 1, // 2/3 of the space
-                                      child: ClipRRect(
-                                        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                                        child: Image.asset(
-                                          item['imageUrl'] ?? "assets/images/itemImageTest.png",
-                                          width: double.infinity,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                                    // Text content
-                                    Expanded(
-                                      flex: 1, // 1/3 of the space
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(12.0),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              item['name'],
-                                              textAlign: TextAlign.center,
-                                              style: const TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black, // Ensure text is black
-                                              ),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              item['category'],
-                                              textAlign: TextAlign.center,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
+              Expanded(
+                child: isLoading 
+                  ? const Center(child: CircularProgressIndicator())
+                  :filteredItems.isEmpty
+                    ? const Center(child: Empty(text: "No items found"))
+                    : GridView.builder(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 12,
+                          crossAxisSpacing: 12,
+                          childAspectRatio: 0.75,
                         ),
-                )
-
+                        itemCount: filteredItems.length,
+                        itemBuilder: (context, index) {
+                          final item = filteredItems[index].data() as Map<String, dynamic>;
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ItemDetailPage(item: item),
+                                ),
+                              );
+                            },
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 4,
+                              color: Colors.white,
+                              child: Column(
+                                children: [
+                                  // Image takes up half the card
+                                  Expanded(
+                                    flex: 1,
+                                    child: ClipRRect(
+                                      borderRadius:
+                                          const BorderRadius.vertical(top: Radius.circular(12)),
+                                      child: Image.network(
+                                        item['imageUrl'] ?? "assets/images/itemImageTest.png",
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          return Image.asset("assets/images/itemImageTest.png");
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  // Text content
+                                  Expanded(
+                                    flex: 1,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(12.0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            item['name'],
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            item['category'],
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+              ),
             ],
           ),
         ),
@@ -214,8 +225,10 @@ class ItemDetailPage extends StatelessWidget {
               _buildInfoCard(Icons.calendar_today, "Shelf Life", item["averageShelfLife"] ?? "Unknown"),
               _buildInfoCard(Icons.info, "Tips", item["tips"] ?? "No tips available"),
               const SizedBox(height: 16),
-              const Text("Nutrition", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
-              ...item["nutrition"].entries.map((entry) => _buildInfoCard(Icons.local_dining, entry.key, "${entry.value} g")),
+              const Text("Nutrition",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+              ...item["nutrition"].entries.map((entry) =>
+                  _buildInfoCard(Icons.local_dining, entry.key, "${entry.value} g")),
             ],
           ),
         ),
@@ -237,6 +250,3 @@ class ItemDetailPage extends StatelessWidget {
     );
   }
 }
-
-
-

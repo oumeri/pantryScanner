@@ -1,62 +1,59 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Import intl package for date formatting
 import 'package:pantry_scanner/presentation/pages/dynamicPages/itemDetailPage.dart';
 
 class PantryItemCard extends StatelessWidget {
-
   final Map<String, dynamic> item;
 
-
   const PantryItemCard({
-      super.key,
-      required this.item,
-      });
-
+    super.key,
+    required this.item,
+  });
 
   @override
   Widget build(BuildContext context) {
+    // Format expiryDate and purchaseDate if they are Timestamp
+    String formattedPurchaseDate = _formatDate(item["purchaseDate"]);
 
-    // Determine the color based on the status
-    Color statusColor = (item["state"] == "fresh")
+    // Determine the color based on the state
+    Color statusColor = (item["state"] == "Fresh")
         ? Colors.green
         : (item["state"] == "Semi-fresh")
             ? Colors.orange
             : const Color.fromARGB(255, 201, 3, 3);
 
-
     return Container(
-        width: 100,
-        height: 100,
-        margin: const EdgeInsets.only(right: 2),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.3), // Shadow color with opacity
-                spreadRadius: 2, // How much the shadow spreads
-                blurRadius: 5, // Softness of the shadow
-                offset: const Offset(3, 3), // Position of the shadow (x, y)
-              ),
-            ],
-        ),
-        child: Stack(
-          children:[ 
-
-            // Background
-            Container(
+      width: 100,
+      height: 100,
+      margin: const EdgeInsets.only(right: 2),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3), // Shadow color with opacity
+            spreadRadius: 2, // How much the shadow spreads
+            blurRadius: 5, // Softness of the shadow
+            offset: const Offset(3, 3), // Position of the shadow (x, y)
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          // Background
+          Container(
             decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/BackgroundPatternFood.png'),
-                  fit: BoxFit.contain, // Adjust how the image fits within the container
-                  repeat: ImageRepeat.repeat, // This will repeat the image in both directions
-                ),
+              image: DecorationImage(
+                image: AssetImage('assets/images/BackgroundPatternFood.png'),
+                fit: BoxFit.contain, // Adjust how the image fits within the container
+                repeat: ImageRepeat.repeat, // This will repeat the image in both directions
               ),
             ),
+          ),
 
-
-           
-            // Foreground content
-            Center(
+          // Foreground content
+          Center(
             child: GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -68,31 +65,30 @@ class PantryItemCard extends StatelessWidget {
               },
               child: Column(
                 children: [
-                  
                   // Image
                   Container(
                     width: double.infinity,
                     height: 130,
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(8), // Top left corner
-                          topRight: Radius.circular(8), // Top right corner
-                        ),
+                        topLeft: Radius.circular(8), // Top left corner
+                        topRight: Radius.circular(8), // Top right corner
+                      ),
                       image: DecorationImage(
-                        image: AssetImage(item["imageUrl"] ?? ''),
+                        image: item["imageUrl"] != null && item["imageUrl"].isNotEmpty
+                            ? NetworkImage(item["imageUrl"]) as ImageProvider
+                            : const AssetImage('assets/images/itemImageTest.png'),
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
-                  
+
                   // Name
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       children: [
-
-
-                        // name of the item
+                        // Name of the item
                         Row(
                           children: [
                             Text(
@@ -106,17 +102,16 @@ class PantryItemCard extends StatelessWidget {
                           ],
                         ),
 
-                        
                         const SizedBox(height: 4),
-                        
-                        // Bought time
+
+                        // Purchased time
                         Row(
                           children: [
                             const Icon(Icons.calendar_today, size: 16, color: Colors.black54),
                             const SizedBox(width: 4),
                             Expanded(
                               child: Text(
-                                'Purchased ${item["purchaseDate"]}',
+                                'Purchased $formattedPurchaseDate', // Using formatted date
                                 style: const TextStyle(
                                   fontSize: 12,
                                   color: Colors.black54,
@@ -125,13 +120,12 @@ class PantryItemCard extends StatelessWidget {
                                 overflow: TextOverflow.visible, // Ensures text is displayed fully
                               ),
                             ),
-                            
                           ],
                         ),
-                        
+
                         const SizedBox(height: 4),
-                        
-                        // storage place
+
+                        // Storage place
                         Row(
                           children: [
                             const Icon(Icons.kitchen, size: 16, color: Colors.black54),
@@ -149,19 +143,15 @@ class PantryItemCard extends StatelessWidget {
                             ),
                           ],
                         ),
-
-                       
                       ],
                     ),
                   ),
-                  
                 ],
               ),
-              )
             ),
-        
-      
-             // Status label at the top
+          ),
+
+            // Status label at the top
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children:[ Positioned(
@@ -186,9 +176,18 @@ class PantryItemCard extends StatelessWidget {
                   ),
                 ),
               ),
-          ]),
-        
-        ]),
-     );
+          ]), 
+        ],
+      ),
+    );
+  }
+
+  // Helper method to format the date
+  String _formatDate(dynamic date) {
+    if (date is Timestamp) {
+      DateTime dateTime = date.toDate();  // Convert Timestamp to DateTime
+      return DateFormat('yyyy-MM-dd').format(dateTime);  // Format the date
+    }
+    return date ?? "Unknown";  // Return a default value if the date is null or not of type Timestamp
   }
 }

@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Import the intl package for date formatting
 
 class ItemDetailPage extends StatelessWidget {
   final Map<String, dynamic> item;
@@ -12,6 +14,10 @@ class ItemDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     Color statusColor = _getStatusColor(item["state"]);
     String statusText = item["state"] ?? "Unknown";
+
+    // Convert Timestamp to formatted string if necessary
+    String formattedPurchaseDate = _formatDate(item["purchaseDate"]);
+    String formattedExpiryDate = _formatDate(item["expiryDate"]);
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
@@ -82,8 +88,8 @@ class ItemDetailPage extends StatelessWidget {
               const SizedBox(height: 20),
               // Information Cards
               _buildInfoCard(Icons.label, "Name", item["name"] ?? "No Name"),
-              _buildInfoCard(Icons.calendar_today, "Purchase Date", item["purchaseDate"] ?? "Unknown"),
-              _buildInfoCard(Icons.event, "Expiry Date", item["expiryDate"] ?? "Unknown"),
+              _buildInfoCard(Icons.calendar_today, "Purchase Date", formattedPurchaseDate),
+              _buildInfoCard(Icons.event, "Expiry Date", formattedExpiryDate),
               _buildInfoCard(Icons.location_on, "Storage Place", item["storagePlace"] ?? "Unknown"),
               _buildInfoCard(Icons.inventory, "Quantity", item["quantity"].toString()),
             ],
@@ -121,5 +127,14 @@ class ItemDetailPage extends StatelessWidget {
       default:
         return Colors.grey;
     }
+  }
+
+  // Helper method to format the date
+  String _formatDate(dynamic date) {
+    if (date is Timestamp) {
+      DateTime dateTime = date.toDate();  // Convert Timestamp to DateTime
+      return DateFormat('yyyy-MM-dd').format(dateTime);  // Format the date
+    }
+    return date ?? "Unknown";  // Return a default value if the date is null or not of type Timestamp
   }
 }
