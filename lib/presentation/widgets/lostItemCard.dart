@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';  // Import the intl package
 
 class Lostitemcard extends StatelessWidget {
   final Map<String, dynamic> lostItem;
@@ -10,6 +12,9 @@ class Lostitemcard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Format lostDate if it's a Timestamp
+    String formattedLostDate = _formatDate(lostItem["lostDate"]);
+
     return Container(
       width: 120,
       height: 150,
@@ -25,7 +30,7 @@ class Lostitemcard extends StatelessWidget {
           children: [
             // Item name
             Text(
-              lostItem["name"],
+              lostItem["name"] ?? '',
               style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
@@ -47,7 +52,7 @@ class Lostitemcard extends StatelessWidget {
             
             // Lost date (timestamp)
             Text(
-              'Lost Date: ${lostItem["lostDate"]}',
+              'Lost Date: $formattedLostDate',  // Using formatted date
               style: const TextStyle(
                 fontSize: 12,
                 color: Colors.white70,
@@ -67,5 +72,14 @@ class Lostitemcard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // Helper method to format the date
+  String _formatDate(dynamic date) {
+    if (date is Timestamp) {
+      DateTime dateTime = date.toDate();  // Convert Timestamp to DateTime
+      return DateFormat('yyyy-MM-dd').format(dateTime);  // Format the date
+    }
+    return date ?? "Unknown";  // Return a default value if the date is null or not of type Timestamp
   }
 }

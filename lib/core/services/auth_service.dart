@@ -80,8 +80,6 @@ class AuthService{
 
 
   Future<void> login (BuildContext context, TextEditingController emailController, TextEditingController passwordController) async {
-    final appContext = Provider.of<AppContext>(context, listen: false);
-
       // show loading circle
      showDialog(
       context: context,
@@ -111,7 +109,7 @@ class AuthService{
           throw Error();
         }
 
-        appContext.setUserProfile(await getUserProfile());
+        //appContext.setUserProfile(await getUserProfile());
 
         // To pop the loading circle
         Navigator.pop(context);
@@ -200,7 +198,7 @@ class AuthService{
 
     // Save the profile data in Firestore under 'profiles' collection
     await firestore.collection('users').doc(user.uid).set(userProfile);
-    appContext.setUserProfile(await getUserProfile());
+    //appContext.setUserProfile(await getUserProfile());
     
   }
 
