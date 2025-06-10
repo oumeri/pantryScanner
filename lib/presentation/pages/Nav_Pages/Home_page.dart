@@ -59,7 +59,7 @@ class _HomePageState extends State<HomePage> {
       final lostItemsResponse = await userService.getLostItems(userId);
       // Fetch Pantry Items
       final pantryItemsResponse = await userService.getUserPantry(userId);
-
+      print("Pantry Items: $pantryItemsResponse");
       setState(() {
         lostItems = lostItemsResponse;
         pantryItems = pantryItemsResponse;

@@ -116,6 +116,10 @@ class AuthService{
             // display error message
             displayMessageToUser(error.code, context);
             Navigator.pop(context);
+      }finally{
+        if(Navigator.canPop(context)){
+          Navigator.pop(context);
+        }
       }
 
     }
