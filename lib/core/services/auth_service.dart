@@ -51,7 +51,7 @@ class AuthService{
 
        // Check if the user profile already exists
         DocumentSnapshot profileSnapshot = await FirebaseFirestore.instance
-            .collection('useers')
+            .collection('users')
             .doc(firebaseUser!.uid)
             .get();
 
@@ -63,9 +63,6 @@ class AuthService{
         }
 
        
-
-      // To pop the loading circle
-      Navigator.pop(context);
       // To navigate to the next page
       Navigator.pop(context);
 
@@ -111,8 +108,6 @@ class AuthService{
 
         //appContext.setUserProfile(await getUserProfile());
 
-        // To pop the loading circle
-        Navigator.pop(context);
         // To navigate to the next page
         Navigator.pop(context);
 
@@ -160,8 +155,6 @@ class AuthService{
         // create the user profile doc
         await createUserProfile(userCredential.user!, nameController.text, appContext);
 
-         // To pop the loading circle
-        Navigator.pop(context);
         // To navigate to the next page
         Navigator.pop(context);
        
@@ -184,36 +177,79 @@ class AuthService{
   }
 
 
-  Future<void> createUserProfile(User user, String name,AppContext appContext) async {
+    Future<void> createUserProfile(User user, String name, AppContext appContext, {bool isAdmin = false}) async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
+    String uid = user.uid;
 
-    // Define the profile data
+    // Define the profile data based on your schema
     Map<String, dynamic> userProfile = {
-      'id': user.uid,
-      'email': user.email,
-      'name': name,
-      'profilePic': user.photoURL ?? '',
-      'createdAt': FieldValue.serverTimestamp(),
+      "email": user.email,
+      "name": name,
+      "profilePic": user.photoURL ?? "",
+      "createdAt": FieldValue.serverTimestamp(),
+      "isAdmin": isAdmin,  // Adding admin field as per schema
     };
 
-    // Save the profile data in Firestore under 'profiles' collection
-    await firestore.collection('users').doc(user.uid).set(userProfile);
-    //appContext.setUserProfile(await getUserProfile());
-    
+    // Save the profile data in Firestore under 'users' collection
+    await firestore.collection('users').doc(uid).set(userProfile);
+
+    // Initialize subcollections with placeholder data
+    await _initializeUserSubcollections(uid);
+
+    // Optionally update the AppContext with the new profile
+    // appContext.setUserProfile(await getUserProfile());
   }
 
-  Future<DocumentSnapshot> getUserProfile() async {
-    User? currentUser = FirebaseAuth.instance.currentUser;
+  // Function to initialize subcollections
+  Future<void> _initializeUserSubcollections(String uid) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-    if (currentUser == null) {
-      throw Exception("No user is currently signed in.");
-    }
+    // Add an empty pantry placeholder
+    await firestore.collection('users').doc(uid).collection('pantry').doc('placeholder').set({
+      "message": "No items yet",
+    });
 
-    return await FirebaseFirestore.instance
-        .collection('users')
-        .doc(currentUser.uid)
-        .get();
+    // Add an empty AI updates placeholder
+    await firestore.collection('users').doc(uid).collection('ai_updates').doc('placeholder').set({
+      "message": "No updates yet",
+    });
+
+    // Add an empty dashboard stats document
+    await firestore.collection('users').doc(uid).collection('dashboard_stats').doc('stats').set({
+      "mostPurchased": {},
+      "mostWasted": {},
+      "categoryBreakdown": {},
+      "averageShelfLife": "0 days",
+      "lastUpdated": FieldValue.serverTimestamp(),
+    });
+
+    // Add empty lost items tracking
+    await firestore.collection('users').doc(uid).collection('lost_items').doc('placeholder').set({
+      "message": "No lost items yet",
+    });
+
+    // Add empty lost stats tracking (weekly, monthly, most lost)
+    await firestore.collection('users').doc(uid).collection('lost_stats').doc('weekly').set({
+      "weekStartDate": FieldValue.serverTimestamp(),
+      "weekEndDate": FieldValue.serverTimestamp(),
+      "totalLost": 0,
+      "lostItems": {},
+    });
+
+    await firestore.collection('users').doc(uid).collection('lost_stats').doc('monthly').set({
+      "monthStartDate": FieldValue.serverTimestamp(),
+      "monthEndDate": FieldValue.serverTimestamp(),
+      "totalLost": 0,
+      "lostItems": {},
+    });
+
+    await firestore.collection('users').doc(uid).collection('lost_stats').doc('most_lost').set({
+      "lostItemsCount": {},
+    });
+
+    print("Subcollections initialized for user: $uid");
   }
+
 
 
 
